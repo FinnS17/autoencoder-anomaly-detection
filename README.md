@@ -46,11 +46,16 @@ Saves a checkpoint (conv_autoencoder.pth / mlp_autoencoder.pth, ignored by git).
 Computes reconstruction MSE for clean vs. corrupted test samples, prints TP/TN/FP/FN, plots the confusion matrix, and shows error histograms.
 Tune THRESHOLD, NOISY_FRACTION, NOISE_LEVEL, MODEL_TYPE, SEED in the config block.
 
-## Results (plots)
-### Original vs. corrupted
-<img src="bilder_autoencoder/corrupted.png" width="55%">
-
 ## Results (quick visual)
+
+**Original vs. corrupted MNIST pictures**
+
+<img src="bilder_autoencoder/corrupted.png" width="40%">
+
+*What you see:* Adding Gaussian noise makes the digits less readable and pushes them away from the clean MNIST distribution.  
+The noise level is basically a “difficulty knob”: more noise → harder reconstruction + easier anomaly separation; less noise → more overlap + more realistic thresholding.
+
+---
 
 **MLP autoencoder (left) vs. Conv autoencoder (right)**  
 <p align="center">
@@ -59,15 +64,43 @@ Tune THRESHOLD, NOISY_FRACTION, NOISE_LEVEL, MODEL_TYPE, SEED in the config bloc
   <img src="bilder_autoencoder/clean_recon_conv.png" width="45%">
 </p>
 
+*What you see:* The conv autoencoder generally keeps strokes and edges cleaner (less “washed out” / blurry) than the MLP.  
+Makes sense because the conv model preserves spatial structure with feature maps instead of flattening early.
+
+---
+
 **Clean vs. noisy reconstruction (comparison)**  
 <p align="center">
   <img src="bilder_autoencoder/reconstruction_clean_corrupted.png" width="85%">
 </p>
 
+*What you see:* On clean inputs (seen during training), reconstructions are almost perfect. On noisy inputs, reconstruction quality drops a lot — even for the conv model — because the network wasn’t trained to model the corrupted distribution.  
+That gap in reconstruction error is exactly what gets used for the anomaly score later.
+
+### Reconstruction error distributions (clean vs. corrupted)
+To turn the autoencoder into a simple anomaly detector, I use the **reconstruction MSE** as an anomaly score:  
+clean digits (in-distribution) should reconstruct with **low error**, while corrupted digits should reconstruct with **higher error**.
+
+I plotted the error distributions for **two noise levels**:
+
+<p align="center">
+  <img src="bilder_autoencoder/recon_error_n0.075_t.png" width="48%" alt="Moderate noise (more overlap)">
+  <img src="bilder_autoencoder/recon_error_n0.4.png" width="48%" alt="High noise (almost perfect separation)">
+</p>
+
+*Left:* moderate noise → more overlap (threshold trade-off).  
+*Right:* high noise → near-perfect separation.
+
+**What you can see:**  
+With **high noise**, the corrupted-error distribution shifts far to the right, so clean vs. corrupted is easy to separate.  
+With **lower noise**, the distributions overlap more, so choosing a threshold becomes a real trade-off (more false positives vs. more false negatives).
+
 ## Notes / takeaways
-- The Conv autoencoder reconstructs MNIST digits cleaner and is more robust to noise than the MLP.
-- Thresholding reconstruction error works as a simple anomaly detector:
-  moderate noise -> overlap (meaningful trade-off), heavy noise -> trivial separation.
+- **Conv beats MLP on images.** Keeping the spatial layout (feature maps + pooling) gives noticeably sharper reconstructions and a much lower validation MSE than the fully-connected models.
+- **Depth didn’t help much for the MLP here.** The deeper MLP wasn’t consistently better than the shallow one (MNIST is simple, and with plain SGD the deeper network is harder to optimize).
+- **MSE vs. SSIM feels different.** MSE is great for stable optimization and low numeric loss, while SSIM tends to care more about “shape/structure” (sometimes nicer-looking digits even if the loss values aren’t directly comparable).
+- **Anomaly detection is basically thresholding an error score.** Reconstruction MSE works as a toy anomaly score: clean digits cluster at low error, corrupted digits shift right.
+- **Noise level controls difficulty.** With heavy noise you get near-perfect separation (easy but boring). With moderate noise the distributions overlap, and the threshold becomes a real precision/recall trade-off (more FP vs. more FN).
 
 ## Project structure
 - scripts/ – training, demos, corruption visualization, thresholding + metrics
