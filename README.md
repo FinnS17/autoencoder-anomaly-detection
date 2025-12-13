@@ -3,9 +3,24 @@
 Small PyTorch playground to compare a simple MLP autoencoder vs. a small convolutional autoencoder on MNIST: reconstruction quality, denoising, and toy anomaly detection via reconstruction error.
 
 ## What’s inside
-- MLP vs. Conv autoencoder (reconstruction quality + loss curves)
-- Denoising (Gaussian noise on MNIST digits)
-- Anomaly detection (threshold on reconstruction MSE + confusion matrix)
+- **MLP autoencoders (baseline + deeper)**  
+  Implemented a simple fully-connected autoencoder and a deeper MLP variant to compare capacity vs. reconstruction quality.
+
+- **Convolutional autoencoder**  
+  Small conv encoder/decoder that keeps spatial structure (feature maps) instead of flattening early.
+
+- **Noise / corruption pipeline for MNIST**  
+  Functions to create corrupted test samples (Gaussian noise) and to compare behavior on:
+  clean inputs (seen during training) vs. noisy inputs (out-of-distribution for the model).
+
+- **Reconstruction quality + loss curves**  
+  Training/validation loss tracking and plots for different architectures and loss choices.
+
+- **Loss functions: MSE + custom SSIM**  
+  Standard pixel-wise MSE, plus a hand-written SSIM loss implementation (no built-in SSIM used).
+
+- **Toy anomaly detection via reconstruction error**  
+  Use reconstruction MSE as an anomaly score: plot error distributions (clean vs. corrupted), pick a threshold, and report confusion matrix + precision/recall/F1.
 
 ## Setup
     pip install -r requirements.txt
@@ -35,24 +50,22 @@ Tune THRESHOLD, NOISY_FRACTION, NOISE_LEVEL, MODEL_TYPE, SEED in the config bloc
 ### Original vs. corrupted
 <img src="bilder_autoencoder/corrupted.png" width="55%">
 
-### Reconstructions
-<img src="bilder_autoencoder/reconstruction_clean_corrupted.png" width="70%">
+## Results (quick visual)
 
-### Reconstruction error distributions (thresholding)
-<table>
-  <tr>
-    <td align="center"><b>overlap (noise = 0.075)</b></td>
-    <td align="center"><b>almost no overlap (noise = 0.4)</b></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="bilder_autoencoder/recon_error_n0.075_t.png" height="220"></td>
-    <td align="center"><img src="bilder_autoencoder/recon_error_n0.4.png" height="220"></td>
-  </tr>
-</table>
+**MLP autoencoder (left) vs. Conv autoencoder (right)**  
+<p align="center">
+  <img src="bilder_autoencoder/clean_recon_deep.png" width="45%">
+  <span style="display:inline-block; width:4px; height:100%; background:#000; margin:0 12px;"></span>
+  <img src="bilder_autoencoder/clean_recon_conv.png" width="45%">
+</p>
+
+**Clean vs. noisy reconstruction (comparison)**  
+<p align="center">
+  <img src="bilder_autoencoder/reconstruction_clean_corrupted.png" width="85%">
+</p>
 
 ## Notes / takeaways
 - The Conv autoencoder reconstructs MNIST digits cleaner and is more robust to noise than the MLP.
-- SSIM loss tends to focus more on structure (strokes), while MSE optimizes pixel-wise error.
 - Thresholding reconstruction error works as a simple anomaly detector:
   moderate noise -> overlap (meaningful trade-off), heavy noise -> trivial separation.
 
@@ -62,8 +75,4 @@ Tune THRESHOLD, NOISY_FRACTION, NOISE_LEVEL, MODEL_TYPE, SEED in the config bloc
 - ssim_loss.py – SSIM loss implementation (no built-in SSIM used)
 - data.py, helpers.py – MNIST loading + noise helpers
 - bilder_autoencoder/ – figures for README
-- data/, *.pth – generated locally (ignored)
 
-## Device
-Device selection is automatic: MPS > CUDA > CPU.
-Reproducibility via SEED in each script.
