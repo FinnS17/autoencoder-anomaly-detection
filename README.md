@@ -1,4 +1,4 @@
-# MNIST Autoencoders: MLP vs Conv + Reconstruction-Error Anomaly Detection
+Autoencoder: MLP vs Conv + Reconstruction-Error Anomaly Detection
 
 ## What’s inside
 - **MLP autoencoders (baseline + deeper)**  
