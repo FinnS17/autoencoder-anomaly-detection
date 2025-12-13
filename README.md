@@ -1,6 +1,4 @@
-# Autoencoder Anomaly Detection
-
-Small PyTorch playground to compare a simple MLP autoencoder vs. a small convolutional autoencoder on MNIST: reconstruction quality, denoising, and toy anomaly detection via reconstruction error.
+# MNIST Autoencoders: MLP vs Conv + Reconstruction-Error Anomaly Detection
 
 ## What’s inside
 - **MLP autoencoders (baseline + deeper)**  
