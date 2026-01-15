@@ -1,4 +1,4 @@
-# Autoencoder: MLP vs Conv + Reconstruction-Error Anomaly Detection
+# Autoencoder: MLP vs Conv + Reconstruction-Error Anomaly Detection - University Project
 
 ## What’s inside
 - **MLP autoencoders (baseline + deeper)**  

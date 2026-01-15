@@ -14,7 +14,7 @@ if str(ROOT) not in sys.path:
 from autoencoder import AutoEncoder
 from conv_autoencoder import ConvAutoEncoder
 from data import get_dataloaders
-from helpers import get_device, set_seed
+from helpers import get_device
 from ssim_loss import SSIMLoss
 
 
@@ -24,7 +24,6 @@ EPOCHS = 15
 BATCH_SIZE = 64
 LEARNING_RATE = 5e-2
 MOMENTUM = 0.8
-SEED = 42
 CHECKPOINT = None  # Path or None -> uses default names below
 SHOW_PLOT = True
 
@@ -78,7 +77,6 @@ def plot_history(train_losses: List[float], val_losses: List[float]):
 
 
 def main():
-    set_seed(SEED)
     device = get_device()
     print(f"Using device: {device}")
 

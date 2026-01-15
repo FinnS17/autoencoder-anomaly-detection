@@ -15,7 +15,7 @@ if str(ROOT) not in sys.path:
 from autoencoder import AutoEncoder
 from conv_autoencoder import ConvAutoEncoder
 from data import mnist_data_test
-from helpers import get_device, make_noisy_images, set_seed
+from helpers import get_device, make_noisy_images
 
 # --- Configuration: tweak here ---
 MODEL_TYPE = "conv"  # "conv" or "mlp"
@@ -23,7 +23,6 @@ CHECKPOINT = None  # Path or None -> uses defaults below
 THRESHOLD = 0.003  # decision boundary on reconstruction error
 NOISY_FRACTION = 0.1  # fraction of test set to corrupt
 NOISE_LEVEL = 0.075  # stddev for Gaussian noise
-SEED = 42
 
 CHECKPOINT_NAMES = {
     "conv": ROOT / "conv_autoencoder.pth",
@@ -56,7 +55,6 @@ def reconstruction_errors(
 
 
 def main():
-    set_seed(SEED)
     device = get_device()
 
     ckpt_path = Path(CHECKPOINT) if CHECKPOINT else CHECKPOINT_NAMES[MODEL_TYPE]

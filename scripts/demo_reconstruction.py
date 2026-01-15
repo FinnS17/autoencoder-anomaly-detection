@@ -12,15 +12,13 @@ if str(ROOT) not in sys.path:
 from autoencoder import AutoEncoder
 from conv_autoencoder import ConvAutoEncoder
 from data import mnist_data_test
-from helpers import get_device, make_noisy_images, set_seed
-
+from helpers import get_device, make_noisy_images
 # --- Configuration: tweak here ---
 MODEL_TYPE = "conv"  # "conv" or "mlp"
 CHECKPOINT = None  # Path or None -> uses defaults below
 ROWS = 4  # how many rows to show
 NOISY_FRACTION = 0.1  # fraction of test set to corrupt
 NOISE_LEVEL = 0.5  # stddev of Gaussian noise
-SEED = 42
 
 CHECKPOINT_NAMES = {
     "conv": ROOT / "conv_autoencoder.pth",
@@ -39,7 +37,6 @@ def load_model(model_type: str, checkpoint: str, device: str):
 
 
 def main():
-    set_seed(SEED)
     device = get_device()
 
     ckpt_path = Path(CHECKPOINT) if CHECKPOINT else CHECKPOINT_NAMES[MODEL_TYPE]

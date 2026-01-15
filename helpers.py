@@ -15,16 +15,6 @@ def get_device() -> str:
         return "cuda"
     return "cpu"
 
-
-def set_seed(seed: int = 42):
-    """Set seeds for reproducibility of sampling and initialization."""
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
-
-
 def add_noise(x: torch.Tensor, noise_level: float = 0.075) -> torch.Tensor:
     noise = torch.randn_like(x) * noise_level
     x_noisy = x + noise

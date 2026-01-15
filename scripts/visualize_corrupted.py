@@ -4,22 +4,20 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parent.parent
-# Allow imports from project root when running the script directly.
+
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from data import mnist_data_test
-from helpers import make_noisy_images, set_seed
+from helpers import make_noisy_images
 
 # --- Configuration: adjust to your liking ---
 PAIRS = 4
 NOISY_FRACTION = 0.1
 NOISE_LEVEL = 0.3
-SEED = 42
 
 
 def main():
-    set_seed(SEED)
 
     noisy_indices, noisy_images = make_noisy_images(
         noisy_fraction=NOISY_FRACTION, noise_level=NOISE_LEVEL
